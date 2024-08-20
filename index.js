@@ -1,9 +1,13 @@
-const express = require('express')
-const app = express()
-const router =require('./routes/routes.js')
+const express = require('express');
+const app = express();
+const path = require('path')
 
-app.use(router)
+const routes = require('./routes/routes.js')
 
-app.listen(4000,() =>{
-    console.log("Server ligado!!");
-})
+app.use('/',routes);
+
+app.use(express.static(path.join(__dirname,'src')));
+
+app.listen(4000, ()=>{
+    console.log('Servidor Ligado')
+});

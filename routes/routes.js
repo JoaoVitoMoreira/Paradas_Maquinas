@@ -1,10 +1,22 @@
-const express = require('express')
-const app = express()
-const router = express.Router
+const express = require('express');
+const router = express.Router();
+const path = require('path')
 
-app.get('/',(req,res) => {
-    res.send('Hello World');
-})
+router.get('/', (req,res) =>{
+    res.send("Hello World from server 4000")
+});
 
+// Puxar Página de login //
 
-module.exports=router;
+router.get('/login', (req, res) => {
+    
+    const filePath = path.resolve(__dirname, '../src/login.html');
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error('Erro ao enviar o arquivo:', err);
+            res.status(500).send('Erro ao carregar o arquivo.');
+        }
+    });
+});
+
+module.exports=router
