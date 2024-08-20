@@ -1,6 +1,6 @@
-const {pool, Pool} = require ('pg')
+const { Pool} = require ('pg')
 
-const poll = new Pool ({
+const pool = new Pool ({
     user: 'postgres',
     password: 'c3xgqVOq7l3e',
     host: 'http://paradas-maquinas.cvee4a6wqmi3.us-east-1.rds.amazonaws.com',
