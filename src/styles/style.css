@@ -1,0 +1,19 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+   
+}
+
+h1{
+    font-size: 48px;
+    text-align: center;
+}
+
+form{
+    margin: 10px;
+    display: block;
+    text-align: center;
+ 
+}
+
