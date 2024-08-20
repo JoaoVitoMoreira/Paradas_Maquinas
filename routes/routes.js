@@ -11,12 +11,7 @@ router.get('/', (req,res) =>{
 router.get('/login', (req, res) => {
     
     const filePath = path.resolve(__dirname, '../src/login.html');
-    res.sendFile(filePath, (err) => {
-        if (err) {
-            console.error('Erro ao enviar o arquivo:', err);
-            res.status(500).send('Erro ao carregar o arquivo.');
-        }
-    });
+    res.sendFile(filePath)
 });
 
 module.exports=router
