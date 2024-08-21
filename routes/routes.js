@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require('path')
 
 router.get('/', (req,res) =>{
-    res.send("Hello World from server 4000")
+    res.send("Página Principal")
 });
 
 // Puxar Página de login //
