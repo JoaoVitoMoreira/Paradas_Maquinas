@@ -9,8 +9,12 @@ router.get('/', (req,res) =>{
 // Puxar Página de login //
 
 router.get('/login', (req, res) => {
-    
     const filePath = path.resolve(__dirname, '../src/login.html');
+    res.sendFile(filePath)
+});
+
+router.get('/produtos', (req, res) => {
+    const filePath = path.resolve(__dirname, '../src/produtos.html');
     res.sendFile(filePath)
 });
 
