@@ -1,12 +1,11 @@
 const db=require('../cnx');
 
 const getProdutos = (_,res) => {
-    const q = "SELECT * FROM produtos";
+    const q = "SELECT * FROM usuarios";
 
-    db.query(q,(err, data) => {
+    db.query(q,(err, rows) => {
         if (err) return res.json(err);
-
-        return res.status(200).json(data);
+        return res.status(200).json(rows);
     });
 };
 

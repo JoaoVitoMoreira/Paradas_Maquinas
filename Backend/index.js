@@ -5,6 +5,8 @@ const path = require('path')
 
 const routes = require('./routes/routes.js')
 
+app.use(cors())
+
 app.use('/',routes);
 
 app.use(express.static(path.join(__dirname,'src')));
