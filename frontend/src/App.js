@@ -25,15 +25,14 @@ function App() {
 
   const getUsers = async () => {
     try{
-      const res = await axios.get("http://localhost:4000/produtos");
-      setUsers(res.data.rows.sort((a, b)=>(a.nome_usua > b.nome_usua ? 1 : -1)))
+      const res = await axios.get("http://localhost:4000/usuarios");
+      setUsers(res.data.sort((a, b)=>(a.nome_usua > b.nome_usua ? 1 : -1)))
     } catch (error){
       toast.error(error)
     }
   }
 
   useEffect(() => {
-    console.log("useEffect is running"); // Verifique se o useEffect é chamado
     getUsers();
   }, [setUsers]);
 
@@ -41,8 +40,8 @@ function App() {
     <>
       <Container>
         <Title>USUÁRIOS</Title>
-        <Form/>
-        <Grid users = {users}/>
+        <Form onEdit={onEdit} setOnEdit={setOnEdit} getUsers={getUsers}/>
+        <Grid users = {users} setUsers={setUsers} setOnEdit={setOnEdit}  getUsers={getUsers}/>
       </Container>
       <ToastContainer autoClose={3000}/>
       <GlobalStyle/>

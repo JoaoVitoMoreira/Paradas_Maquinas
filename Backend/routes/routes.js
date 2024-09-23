@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
+import path from 'path';
+import { getUsuarios,addUsuarios,updateUsuario,deleteUsuario } from '../controllers/user.js';
+
 const router = express.Router();
-const path = require('path')
-const getProdutos = require('../controllers/produtos');
-const cors = require('cors');
 
 router.get('/', (req,res) =>{
     res.send("Página Principal")
@@ -15,6 +15,12 @@ router.get('/login', (req, res) => {
     res.sendFile(filePath)
 });
 
-router.get("/produtos", getProdutos)
+router.get("/usuarios", getUsuarios);
 
-module.exports=router
+router.post("/usuarios", addUsuarios);
+
+router.put("/usuarios/:id", updateUsuario);
+
+router.delete("/usuarios/:id", deleteUsuario);
+
+export default router;
