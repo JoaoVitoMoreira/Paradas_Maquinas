@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const { getUsuarios, addUsuarios,updateUsuario,deleteUsuario } = require('../controllers/user.js');
+const {  getUsuarios,addUsuarios,updateUsuario,deleteUsuario } = require('../controllers/user.js');
+
 
 const router = express.Router();
 
