@@ -1,17 +1,17 @@
-import { db } from '../cnx.js';
+const  db  = require('../cnx.js');
 
-export const getUsuarios = async (_, res) => {
+const getUsuarios = async (_, res) => {
     const q = "SELECT * FROM usuarios";
 
     try {
         const { rows } = await db.query(q);
         return res.status(200).json(rows);
     } catch (err) {
-        return res.status(500).json(err);
+        return res.status(500).json({ error: err.message, details: err });
     }
 };
 
-export const addUsuarios = (req, res) => {
+const addUsuarios = (req, res) => {
     const q = 'INSERT INTO usuarios (nome_usua, senha_usua, func_usua) VALUES ($1, $2, $3) RETURNING *';
 
     const values = [
@@ -31,7 +31,7 @@ export const addUsuarios = (req, res) => {
 };
 
 
-export const updateUsuario = async (req, res) => {
+const updateUsuario = async (req, res) => {
     const q = "UPDATE usuarios SET nome_usua = $1, senha_usua = $2, func_usua = $3 WHERE id_usua = $4";
     const values = [
         req.body.nome_usua,
@@ -57,7 +57,7 @@ export const updateUsuario = async (req, res) => {
 };
 
 
-export const deleteUsuario = async (req, res) => {
+const deleteUsuario = async (req, res) => {
     const q = "DELETE FROM usuarios WHERE id_usua = $1 RETURNING *";
 
     try {
@@ -66,4 +66,11 @@ export const deleteUsuario = async (req, res) => {
     } catch (err) {
         return res.status(500).json(err);
     }
+};
+
+module.exports = {
+    getUsuarios,
+    addUsuarios,
+    updateUsuario,
+    deleteUsuario
 };
