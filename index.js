@@ -21,7 +21,7 @@ app.post('/moldes', async (req, res) => {
         const moldes = await Moldes.create({nome_mold, form_mold});
         res.status(201).json(moldes);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: 'Não foi possível criar!'});
     }
 });
 

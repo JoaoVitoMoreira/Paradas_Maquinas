@@ -15,6 +15,8 @@ router.get('/login', (req, res) => {
     res.sendFile(filePath)
 });
 
+
+
 router.get("/usuarios", getUsuarios);
 
 router.post("/usuarios", addUsuarios);
