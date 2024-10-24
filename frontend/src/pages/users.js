@@ -27,7 +27,7 @@ function User() {
     console.log("Componente User foi renderizado");
   // Defina o estado para 'users' e 'onEdit'
   
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState();
   const [onEdit, setOnEdit] = useState(null);
 
   

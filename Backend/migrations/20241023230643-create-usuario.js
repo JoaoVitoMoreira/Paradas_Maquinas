@@ -13,10 +13,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       senha_usua: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       func_usua:{
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
