@@ -1,6 +1,6 @@
 {
   "development": {
-    "username": "postgres",
+   "username": "postgres",
     "password": "qIBg*T:nd\"cjNb-8",
     "database": "paradas-maquinas",
     "host": "34.45.198.90",

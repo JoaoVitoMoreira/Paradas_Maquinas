@@ -1,6 +1,9 @@
 const express = require('express');
 const path = require('path');
-const {  getUsuarios,addUsuarios,updateUsuario,deleteUsuario } = require('../controllers/user.js');
+const {  addUsuarios,updateUsuario,deleteUsuario } = require('../controllers/user.js');
+const getUsuarios = require('../controllers/users-sequelize.js')
+
+
 
 
 const router = express.Router();
