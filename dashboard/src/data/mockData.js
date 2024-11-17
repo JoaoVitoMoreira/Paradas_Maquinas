@@ -268,52 +268,52 @@ export const mockDataInvoices = [
 
 export const mockTransactions = [
   {
-    txId: "01e4dsa",
-    user: "johndoe",
-    date: "2021-09-01",
-    cost: "43.95",
+    txId: "01",
+    user: "Extrusora",
+    date: "11-02-2020",
+    Text: "Ativo",
   },
   {
-    txId: "0315dsaa",
-    user: "jackdower",
-    date: "2022-04-01",
-    cost: "133.45",
+    txId: "02",
+    user: "Extrusora",
+    date: "15-06-2019",
+    Text: "Ativo",
   },
   {
-    txId: "01e4dsa",
-    user: "aberdohnny",
-    date: "2021-09-01",
-    cost: "43.95",
+    txId: "03",
+    user: "Extrusora",
+    date: "19-08-2016",
+    Text: "Ativo",
   },
   {
-    txId: "51034szv",
-    user: "goodmanave",
-    date: "2022-11-05",
-    cost: "200.95",
+    txId: "04",
+    user: "Extrusora",
+    date: "02-01-2021",
+    Text: "Ativo",
   },
   {
-    txId: "0a123sb",
-    user: "stevebower",
-    date: "2022-11-02",
-    cost: "13.55",
+    txId: "05",
+    user: "Extrusora",
+    date: "13-09-2023",
+    Text: "Ativo",
   },
   {
-    txId: "01e4dsa",
-    user: "aberdohnny",
-    date: "2021-09-01",
-    cost: "43.95",
+    txId: "06",
+    user: "Extrusora",
+    date: "09-07-2018",
+    Text: "Ativo",
   },
   {
-    txId: "120s51a",
-    user: "wootzifer",
-    date: "2019-04-15",
-    cost: "24.20",
+    txId: "07",
+    user: "Extrusora",
+    date: "24-11-2022",
+    Text: "Ativo",
   },
   {
-    txId: "0315dsaa",
-    user: "jackdower",
-    date: "2022-04-01",
-    cost: "133.45",
+    txId: "08",
+    user: "Extrusora",
+    date: "31-08-2023",
+    Text: "Ativo",
   },
 ];
 
@@ -432,165 +432,121 @@ export const mockPieData = [
 
 export const mockLineData = [
   {
-    id: "japan",
+    id: "Setor 1",
     color: tokens("dark").greenAccent[500],
     data: [
       {
-        x: "plane",
+        x: "Extrusora 1",
         y: 101,
       },
       {
-        x: "helicopter",
+        x: "Extrusora 2",
         y: 75,
       },
       {
-        x: "boat",
+        x: "Extrusora 3",
         y: 36,
       },
       {
-        x: "train",
+        x: "Extrusora 4",
         y: 216,
       },
       {
-        x: "subway",
+        x: "Extrusora 5",
         y: 35,
       },
       {
-        x: "bus",
+        x: "Extrusora 6",
         y: 236,
       },
       {
-        x: "car",
+        x: "Extrusora 7",
         y: 88,
       },
       {
-        x: "moto",
+        x: "Extrusora 8",
         y: 232,
       },
-      {
-        x: "bicycle",
-        y: 281,
-      },
-      {
-        x: "horse",
-        y: 1,
-      },
-      {
-        x: "skateboard",
-        y: 35,
-      },
-      {
-        x: "others",
-        y: 14,
-      },
+     
+    
     ],
   },
   {
-    id: "france",
+    id: "Setor 2",
     color: tokens("dark").blueAccent[300],
     data: [
       {
-        x: "plane",
+        x: "Extrusora 1",
         y: 212,
       },
       {
-        x: "helicopter",
+        x: "Extrusora 2",
         y: 190,
       },
       {
-        x: "boat",
+        x: "Extrusora 3",
         y: 270,
       },
       {
-        x: "train",
+        x: "Extrusora 4",
         y: 9,
       },
       {
-        x: "subway",
+        x: "Extrusora 5",
         y: 75,
       },
       {
-        x: "bus",
+        x: "Extrusora 6",
         y: 175,
       },
       {
-        x: "car",
+        x: "Extrusora 7",
         y: 33,
       },
       {
-        x: "moto",
+        x: "Extrusora 8",
         y: 189,
       },
-      {
-        x: "bicycle",
-        y: 97,
-      },
-      {
-        x: "horse",
-        y: 87,
-      },
-      {
-        x: "skateboard",
-        y: 299,
-      },
-      {
-        x: "others",
-        y: 251,
-      },
+      
     ],
   },
   {
-    id: "us",
+    id: "Setor 3 ",
     color: tokens("dark").redAccent[200],
     data: [
       {
-        x: "plane",
+        x: "Extrusora 1",
         y: 191,
       },
       {
-        x: "helicopter",
+        x: "Extrusora 2",
         y: 136,
       },
       {
-        x: "boat",
+        x: "Extrusora 3",
         y: 91,
       },
       {
-        x: "train",
+        x: "Extrusora 4",
         y: 190,
       },
       {
-        x: "subway",
+        x: "Extrusora 5",
         y: 211,
       },
       {
-        x: "bus",
+        x: "Extrusora 6",
         y: 152,
       },
       {
-        x: "car",
+        x: "Extrusora 7",
         y: 189,
       },
       {
-        x: "moto",
+        x: "Extrusora 8",
         y: 152,
       },
-      {
-        x: "bicycle",
-        y: 8,
-      },
-      {
-        x: "horse",
-        y: 197,
-      },
-      {
-        x: "skateboard",
-        y: 107,
-      },
-      {
-        x: "others",
-        y: 170,
-      },
+      
     ],
   },
 ];
