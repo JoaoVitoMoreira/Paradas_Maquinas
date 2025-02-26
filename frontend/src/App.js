@@ -1,15 +1,15 @@
 import "react-toastify/dist/ReactToastify.css";
-import {RouterProvider} from "react-router-dom"
-import router from "./router"
-import Global from "./styles/global.js"
+import { RouterProvider } from "react-router-dom";
+import router from "./router";
+import Global from "./styles/global.js";
 import { AuthProvider } from "./contexts/auth.js";
 
-function App(){
+function App() {
   return (
-    <>
-     <RouterProvider router={router} /> 
-     <Global/>
-    </>
+    <AuthProvider> 
+      <RouterProvider router={router} />
+      <Global />
+    </AuthProvider>
   );
 }
 
