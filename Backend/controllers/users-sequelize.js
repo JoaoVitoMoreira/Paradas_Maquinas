@@ -1,7 +1,9 @@
+const { where } = require('sequelize');
 const db = require('../cnx.js');  
 const { Usuario } = require('../models')
-const bcrypt = require('bcrypt');  
-const jwt = require('jsonwebtoken');  
+const bcrypt = require('bcryptjs');  
+const jwt = require('jsonwebtoken');
+
 
 const getUsuarios = async (_, res) => {
     try {
@@ -15,10 +17,13 @@ const getUsuarios = async (_, res) => {
 };
 
 const addUsuarios = async (req, res) => {
+
+    var salt = bcrypt.genSaltSync(12);
+
     try {
       const novoUsuario = await Usuario.create({
         nome_usua: req.body.nome,
-        senha_usua: req.body.senha,
+        senha_usua: bcrypt.hashSync(req.body.senha),
         func_usua: req.body.cargo,
       });
   
@@ -72,47 +77,63 @@ const deleteUsuario = async (req, res) => {
     }
 };
 
-// Funçao de Login de usuário
+const getUsuarioAutenticado = async (req, res) => {
+  const token = req.cookies.token;
 
-const loginUsuario = async (req, res) => {
-  const { email, senha } = req.body;
-
-  // Verificando os campos preenchidos
-  if (!email || !senha) {
-    return res.status(400).json({ message: "E-mail e senha são obrigatórios" });
+  if (!token) {
+    return res.status(401).json({ message: "Token não fornecido" });
   }
 
   try {
-    // Usando Sequelize para encontrar o usuário pelo e-mail
-    const user = await Usuario.findOne({ where: { email_usua: email } });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "chave_secreta");
 
-    if (!user) {
-      return res.status(401).json({ message: "Usuário não encontrado" });
+    return res.json({
+      usuario: { nome_usua: decoded.nome } // 👈 nome_usua vem do token
+    });
+  } catch (error) {
+    return res.status(401).json({ message: "Token inválido" });
+  }
+};
+
+
+
+const loginUsuario = async (req, res) => {
+  const { nome, senha } = req.body;
+
+  try {
+    const user = await Usuario.findOne({ where: { nome_usua: nome } });
+
+    if (!user || !bcrypt.compareSync(senha, user.senha_usua)) {
+      return res.status(401).json({ message: "Nome ou senha incorretos!" });
     }
 
-    // Comparando a senha criptografada no banco de dados
-    const isPasswordValid = await bcrypt.compare(senha, user.senha_usua);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "E-mail ou senha incorretos!" });
-    }
-
-    // Gerando token JWT
     const token = jwt.sign(
-      { userId: user.id_usua, email: user.email_usua },
-      process.env.JWT_SECRET,
-      { expiresIn: '10min' }
+      { id: user.id_usua, nome: user.nome_usua },
+      process.env.JWT_SECRET || "chave_secreta",
+      { expiresIn: "1min" }
     );
 
-    // Enviando o token no corpo de resposta
-    return res.status(200).json({
-      message: "Login bem-sucedido",
-      token: token // Enviando o token gerado
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: false,
+      maxAge: 3600000
     });
-  } catch (err) {
-    console.error("Erro ao realizar o login ", err);
-    return res.status(500).json({ message: "Erro interno ao realizar o login", details: err.message });
+
+    return res.json({ message: "Login bem-sucedido" });
+  } catch (error) {
+    console.error("Erro no login:", error);
+    res.status(500).json({ message: "Erro no servidor" });
   }
+};
+
+const logoutUsuario = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: false,
+  });
+  res.json({ message: "Logout realizado com sucesso" });
 };
 
 
@@ -121,5 +142,8 @@ module.exports = {
     addUsuarios,
     updateUsuario,
     deleteUsuario,
-    loginUsuario
+    loginUsuario,
+    logoutUsuario,
+    getUsuarioAutenticado
 };
+

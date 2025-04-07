@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         senha_usua: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false
         },
         func_usua: {

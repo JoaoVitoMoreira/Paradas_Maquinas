@@ -2,21 +2,21 @@
   "development": {
    "username": "postgres",
     "password": "G6xty:b;V;t(*sVp",
-    "database": "maquina-apontamento",
+    "database": "maquinas-apontamento",
     "host": "34.72.222.186",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
     "password": "G6xty:b;V;t(*sVp",
-    "database": "maquina-apontamento",
+    "database": "maquinas-apontamento",
     "host": "34.72.222.186",
     "dialect": "postgres"
   },
   "production": {
    "username": "postgres",
     "password": "G6xty:b;V;t(*sVp",
-    "database": "maquina-apontamento",
+    "database": "maquinas-apontamento",
     "host": "34.72.222.186",
     "dialect": "postgres"
   }
