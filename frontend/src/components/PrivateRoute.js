@@ -1,14 +1,15 @@
-import { useAuth } from "../contexts/hooks/useAuth";
+import { useAuth } from "../contexts/useAuth";
 import { Navigate } from "react-router-dom";
 
 const PrivateRoute = ({ children }) => {
-  const { signed } = useAuth();
+  const { signed, loading } = useAuth();
 
-  if (signed === undefined) {
-    return null; // Ou um spinner/carregando
+  if (loading) {
+    return null; // ou algum <LoadingSpinner />
   }
 
   return signed ? children : <Navigate to="/" />;
 };
 
 export default PrivateRoute;
+

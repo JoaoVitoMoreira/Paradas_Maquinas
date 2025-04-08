@@ -110,7 +110,7 @@ const loginUsuario = async (req, res) => {
     const token = jwt.sign(
       { id: user.id_usua, nome: user.nome_usua },
       process.env.JWT_SECRET || "chave_secreta",
-      { expiresIn: "1min" }
+      { expiresIn: "10min" }
     );
 
     res.cookie("token", token, {

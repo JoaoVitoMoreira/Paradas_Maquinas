@@ -34,7 +34,9 @@ function User() {
 
   const getUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/usuarios");
+      const res = await axios.get("http://localhost:4000/usuarios",{
+        withCredentials: true, 
+      });
       setUsers(res.data.sort((a, b) => (a.nome_usua > b.nome_usua ? 1 : -1)));
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
@@ -43,6 +45,7 @@ function User() {
   };
 
   useEffect(() => {
+    console.log("👀 Usuários page montada");
     getUsers(); // Chama a função para buscar os usuários quando o componente é montado
   }, []);
 

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import * as C from "./styles";
-import { useAuth } from '../../contexts/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/useAuth';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FiUser, FiLock } from "react-icons/fi";
+
 
 const Login = () => {
   const { signin, signed } = useAuth();
@@ -13,15 +14,14 @@ const Login = () => {
   const [nome, setNome] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
-  const [conectado, setConectado] = useState(false); 
-
+ 
+  const location = useLocation();
   // Redireciona se o usuário já estiver logado
   useEffect(() => {
-    if (signed) {
+    if (signed && location.pathname === "/") {
       navigate("/home");
     }
-  }, [signed, navigate]);
-
+  }, [signed, navigate, location]);
   const handleLogin = async () => {
     if (!nome || !senha) {
       setError("Preencha todos os campos");
@@ -81,15 +81,6 @@ const Login = () => {
         />
 
         <C.labelError>{error}</C.labelError>
-
-        <C.CheckboxContainer>
-          <input
-            type="checkbox"
-            checked={conectado}
-            onChange={() => setConectado(!conectado)}
-          />
-          <C.LabelCheckbox>Manter-me conectado</C.LabelCheckbox>
-        </C.CheckboxContainer>
 
         <Button Text="ENTRAR" onClick={handleLogin} />
       </C.Content>

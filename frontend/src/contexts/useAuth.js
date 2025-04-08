@@ -4,60 +4,59 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ Agora está no lugar certo
 
   // Verifica se o usuário está logado no backend
   const checkUserLogged = async () => {
     try {
-      const response = await fetch("http://localhost:4000/usuarios", {
+      const response = await fetch("http://localhost:4000/usuario-autenticado", {
         method: "GET",
         credentials: "include",
       });
 
-      const data = await response.json(); // 👈 isso estava faltando
-
-      console.log("Resposta do backend:", data); // 👈 pode deixar pra debug
-
+      const data = await response.json();
       if (response.ok && data.usuario) {
         setUser({ nome: data.usuario.nome_usua });
       } else {
         setUser(null);
       }
     } catch (err) {
-      console.error("Erro ao verificar login:", err);
       setUser(null);
+    } finally {
+      setLoading(false); // 👈 marca como terminado
     }
   };
 
   // Ao carregar a página, verifica se o usuário está logado
-  useEffect(() => { 
+  useEffect(() => {
     checkUserLogged();
   }, []);
 
   // Função de login
   const signin = async (nome, senha) => {
-  try {
-    const response = await fetch("http://localhost:4000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ nome, senha }),
-    });
+    try {
+      const response = await fetch("http://localhost:4000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ nome, senha }),
+      });
 
-    const data = await response.json();
-    console.log("🔐 Login response:", response.status, data);
+      const data = await response.json();
+      console.log("🔐 Login response:", response.status, data);
 
-    if (!response.ok) {
-      return data.message || "Erro ao fazer login";
+      if (!response.ok) {
+        return data.message || "Erro ao fazer login";
+      }
+
+      await checkUserLogged();
+
+      return null;
+    } catch (error) {
+      console.error("Erro ao se conectar com o servidor:", error);
+      return "Erro ao se conectar com o servidor";
     }
-
-    await checkUserLogged();
-
-    return null;
-  } catch (error) {
-    console.error("Erro ao se conectar com o servidor:", error);
-    return "Erro ao se conectar com o servidor";
-  }
-};
+  };
 
   // Função de logout
   const signout = async () => {
@@ -74,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signed: !!user, signin, signout }}>
+    <AuthContext.Provider value={{ user, signed: !!user, signin, signout, loading }}>
       {children}
     </AuthContext.Provider>
   );

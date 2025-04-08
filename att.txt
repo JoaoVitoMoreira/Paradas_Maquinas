@@ -1,0 +1,5 @@
+- Adicionar login via email validado.
+
+- Verificar chave secreta JWT(IMPORTANTE).
+
+- Alterar função que edita o usuario.

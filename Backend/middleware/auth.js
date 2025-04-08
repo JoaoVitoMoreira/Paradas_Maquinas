@@ -1,19 +1,30 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-  const token = req.cookies.token; // 👈 Agora o token vem do cookie
+  const token = req.cookies.token;
+
+  console.log("🍪 Token recebido no cookie:", token);
 
   if (!token) {
     return res.status(401).json({ message: 'Token não fornecido' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Você ainda pode acessar req.user nos controllers
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "chave_secreta");
+    console.log("✅ Token decodificado com sucesso:", decoded);
+    
+    req.user = decoded;
     next();
   } catch (error) {
-    return res.status(403).json({ message: 'Token inválido ou expirado' });
+    console.error("❌ Erro ao verificar o token:", error.message);
+    
+    if (error.name === 'TokenExpiredError') {
+      return res.status(403).json({ message: 'Token expirado' });
+    }
+
+    return res.status(403).json({ message: 'Token inválido' });
   }
 };
 
 module.exports = authMiddleware;
+
