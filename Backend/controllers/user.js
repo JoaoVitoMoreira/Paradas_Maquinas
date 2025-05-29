@@ -72,47 +72,182 @@ const deleteUsuario = async (req, res) => {
 
 // Funçao de Login de usuário
 
-const loginUsuario = async (req,res) =>{
-    const {email, senha} = req.body; 
+const loginUsuario = async (req, res) => {
+  const { nome, senha } = req.body;
+  const q = "SELECT * FROM usuarios WHERE nome_usua = $1";
+  try {
+    const result = await db.query(q, [nome]);
 
-    // Verificando os campos preenchidos
-    if(!email || !senha) {
-        return res.status(400).json({message: "E-mail e senha são obrigatórios"});
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: "Usuário não encontrado" });
     }
 
-    try{
-        // Verificação de existência de usuario no banco de dados
-        const result = await db.query("SELECT * FROM usuarios WHERE email_usua = $1",[email]) 
+    const usuario = result.rows[0];
 
-        if(result.rows.length === 0){
-            return res.status(401).json({message: "Usuário não encontrando"});
-        }
-
-        const user = result.rows[0];
-
-        // comparando a senha criptografada no banco de dados
-        const isPasswordValid = await bcrypt.compare(senha,user.senha_usua);
-
-        if(!isPasswordValid){
-            return res.status(401).json({message:"E-mail ou senha incorretos!"});
-        }
-
-        // Gerando token JWT
-        const token = jwt.sign(
-            {userId:user.id_usua,email:user.email_usua},
-            process.env.JWT_SECRET,
-            {expiresIn:'10min'}
-        );
-
-        // Enviando o token no corpo de resposta 
-        return res.status(200).json({
-            message:"Login bem-sucedido",
-            token:token // Enviando o token gerado
-        });
-    } catch (err){
-        console.error("Erro ao realizar o login ",err);
-        return res.status(500).json({message:"Erro interno ao realizar o login",details:err.message})
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha_usua);
+    if (!senhaCorreta) {
+      return res.status(401).json({ message: "Senha incorreta" });
     }
+
+    const payload = {
+      id: usuario.id_usua,
+      nome: usuario.nome_usua,
+      tipo: usuario.func_usua,
+    };
+
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: ACCESS_TOKEN_EXPIRES,
+    });
+
+    const refreshToken = crypto.randomBytes(64).toString("hex");
+    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRES_DIAS * 24 * 60 * 60 * 1000);
+
+    await db.query(
+      "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)",
+      [usuario.id_usua, refreshToken, expiresAt]
+    );
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: REFRESH_TOKEN_EXPIRES_DIAS * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "Login bem-sucedido" });
+
+  } catch (err) {
+    console.error("Erro no login:", err);
+    res.status(500).json({ message: "Erro interno" });
+  }
+};
+
+const refreshUsuario = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Refresh token não fornecido." });
+  }
+
+  try {
+    const q = "SELECT * FROM refresh_tokens WHERE token = $1 AND expires_at > NOW()";
+    const result = await db.query(q, [refreshToken]);
+
+    if (result.rows.length === 0) {
+      return res.status(403).json({ message: "Refresh token inválido ou expirado." });
+    }
+
+    const tokenData = result.rows[0];
+
+    const userQuery = await db.query("SELECT * FROM usuarios WHERE id_usua = $1", [tokenData.user_id]);
+    const usuario = userQuery.rows[0];
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuário não encontrado." });
+    }
+
+    const payload = {
+      id: usuario.id_usua,
+      nome: usuario.nome_usua,
+      tipo: usuario.func_usua,
+    };
+
+    const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: ACCESS_TOKEN_EXPIRES,
+    });
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "Access token renovado com sucesso." });
+
+  } catch (err) {
+    console.error("Erro no refresh:", err);
+    res.status(500).json({ message: "Erro interno ao renovar token." });
+  }
+};
+
+const logoutUsuario = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(400).json({ message: "Nenhum refresh token fornecido." });
+  }
+
+  try {
+    await db.query("DELETE FROM refresh_tokens WHERE token = $1", [refreshToken]);
+
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict"
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict"
+    });
+
+    res.status(200).json({ message: "Logout realizado com sucesso." });
+
+  } catch (err) {
+    console.error("Erro no logout:", err);
+    res.status(500).json({ message: "Erro ao fazer logout." });
+  }
+};
+
+const listarSessoesUsuario = async (req, res) => {
+  const usuario = req.user;
+
+  try {
+    const result = await db.query(
+      "SELECT id, token, created_at, expires_at FROM refresh_tokens WHERE user_id = $1 ORDER BY created_at DESC",
+      [usuario.id]
+    );
+
+    res.status(200).json({ sessoes: result.rows });
+
+  } catch (err) {
+    console.error("Erro ao listar sessões:", err);
+    res.status(500).json({ message: "Erro ao buscar sessões." });
+  }
+};
+
+const revogarSessaoUsuario = async (req, res) => {
+  const usuario = req.user;
+  const sessaoId = parseInt(req.params.id);
+
+  if (isNaN(sessaoId)) {
+    return res.status(400).json({ message: "ID inválido." });
+  }
+
+  try {
+    const result = await db.query(
+      "SELECT * FROM refresh_tokens WHERE id = $1 AND user_id = $2",
+      [sessaoId, usuario.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Sessão não encontrada." });
+    }
+
+    await db.query("DELETE FROM refresh_tokens WHERE id = $1", [sessaoId]);
+
+    res.status(200).json({ message: "Sessão revogada com sucesso." });
+
+  } catch (err) {
+    console.error("Erro ao revogar sessão:", err);
+    res.status(500).json({ message: "Erro ao revogar sessão." });
+  }
 };
 
 module.exports = {
@@ -121,4 +256,8 @@ module.exports = {
     updateUsuario,
     deleteUsuario,
     loginUsuario,
+    refreshUsuario,
+    logoutUsuario,
+    listarSessoesUsuario,
+    revogarSessaoUsuario
 };
