@@ -1,9 +1,6 @@
-const { where } = require('sequelize');
-const db = require('../cnx.js');  
 const { Usuario } = require('../models')
 const bcrypt = require('bcryptjs');  
 const jwt = require('jsonwebtoken');
-
 
 const getUsuarios = async (_, res) => {
     try {
@@ -112,7 +109,7 @@ const loginUsuario = async (req, res) => {
       process.env.JWT_SECRET || "chave_secreta",
       { expiresIn: "10min" }
     );
-
+    
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "Strict",
