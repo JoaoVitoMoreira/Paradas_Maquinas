@@ -1,91 +1,189 @@
-import React, { useState, useEffect } from 'react';
-import Input from "../../components/Input";
-import Button from "../../components/Button";
-import * as C from "./styles";
+// Arquivo: src/pages/Login/index.js
+
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/useAuth';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { FiUser, FiLock } from "react-icons/fi";
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
+// --- Componentes de Estilo (SUA ESTILIZAÇÃO ORIGINAL PRESERVADA) ---
+
+const LoginContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #d6d3f0; /* Sua cor de fundo */
+`;
+
+const FormContainer = styled.form`
+  background-color: white;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+`;
+
+const Title = styled.h2`
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+
+  & > span {
+    color: #8b5cf6; /* Sua cor de destaque */
+    font-weight: bold;
+  }
+`;
+
+const Subtitle = styled.p`
+  color: #6b7280;
+  margin-bottom: 2rem;
+`;
+
+// MUDANÇA 1: InputArea se torna a referência de posição para o label
+const InputArea = styled.div`
+  position: relative;
+  margin-bottom: 2.5rem;
+`;
+
+// MUDANÇA 2: Label é posicionado de forma absoluta para o efeito "flutuante"
+const Label = styled.label`
+  position: absolute;
+  top: 13px;
+  left: 10px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+  background-color: white; // Fundo branco para cobrir a linha ao flutuar
+  padding: 0 5px; // Espaçamento para não encostar na linha
+`;
+
+// MUDANÇA 3: Input tem apenas a borda de baixo e controla o Label
+const Input = styled.input`
+  width: 100%;
+  padding: 12px 10px;
+  border: 1px solid #ddd; // Mantivemos uma borda sutil para o estado inicial
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  background-color: transparent;
+  outline: none;
+
+  &:focus {
+    border-color: #8b5cf6; // Usa a sua cor roxa no foco
+  }
+
+  // Quando o input está focado OU tem algum valor, o Label sobe
+  &:focus + ${Label},
+  &:not(:placeholder-shown) + ${Label} {
+    top: -10px;
+    left: 8px;
+    font-size: 0.8rem;
+    color: #8b5cf6; // Usa a sua cor roxa no foco
+  }
+`;
+
+// Estilo original do botão preservado
+const Button = styled.button`
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  background-color: #8b5cf6;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: bold;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #7c3aed;
+  }
+
+  &:disabled {
+    background-color: #c4b5fd;
+    cursor: not-allowed;
+  }
+`;
+
+const LoadingBar = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.15);
+  width: ${(props) => (props.isLoading ? '100%' : '0%')};
+  transition: width 1.5s ease-out;
+`;
+
+const ButtonText = styled.span`
+  position: relative;
+  z-index: 2;
+`;
 
 
-const Login = () => {
-  const { signin, signed } = useAuth();
-  const navigate = useNavigate();
+// --- Componente Principal da Página ---
 
-  const [nome, setNome] = useState("");
-  const [senha, setSenha] = useState("");
-  const [error, setError] = useState("");
- 
-  const location = useLocation();
-  // Redireciona se o usuário já estiver logado
-  useEffect(() => {
-    if (signed && location.pathname === "/") {
-      navigate("/home");
-    }
-  }, [signed, navigate, location]);
-  const handleLogin = async () => {
-    if (!nome || !senha) {
-      setError("Preencha todos os campos");
-      return;
-    }
+function LoginPage() {
+    // ... A lógica do seu componente (useState, handleLogin) permanece a mesma ...
+    const [nome, setNome] = useState('');
+    const [senha, setSenha] = useState('');
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { signin } = useAuth();
+    const navigate = useNavigate();
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError('');
+        setIsSubmitting(true);
+        try {
+            const result = await signin(nome, senha);
+            if (result) {
+                setError(result);
+                setIsSubmitting(false);
+            } else {
+                setTimeout(() => navigate('/home'), 1500);
+            }
+        } catch (err) {
+            setError("Ocorreu um erro inesperado.");
+            setIsSubmitting(false);
+        }
+    };
 
-    try {
-      const res = await signin(nome, senha);
-      console.log("🚀 Resultado do signin:", res);
-      if (res) {
-        setError(res);
-        return;
-      }
+    return (
+        <LoginContainer>
+            <FormContainer onSubmit={handleLogin}>
+                <Title>Bem vindo ao <span>LOGIN</span></Title>
+                <Subtitle>Preencha os dados de login para acessar</Subtitle>
+                
+                {/* MUDANÇA 4: A estrutura no JSX é alterada (Input antes de Label) */}
+                <InputArea>
+                    <Input id="nome" type="text" value={nome} onChange={(e) => setNome(e.target.value)} required placeholder=" "/>
+                    <Label htmlFor="nome">Usuário</Label>
+                </InputArea>
 
-      navigate("/home");
-    } catch (error) {
-      setError("Erro ao fazer login");
-    }
-  };
+                <InputArea>
+                    <Input id="senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required placeholder=" "/>
+                    <Label htmlFor="senha">Senha</Label>
+                </InputArea>
 
-  // Permite pressionar Enter para logar
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleLogin();
-    }
-  };
+                {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
 
-  return (
-    <C.Container>
-      <C.Content>
-        <C.Label>
-          Bem vindo ao <C.LoginText>LOGIN</C.LoginText>
-        </C.Label>
-        <C.Label2>Preencha os dados de login para acessar</C.Label2>
+                <Button type="submit" disabled={isSubmitting}>
+                    <LoadingBar isLoading={isSubmitting} />
+                    <ButtonText>{isSubmitting ? 'ENTRANDO...' : 'ENTRAR'}</ButtonText>
+                </Button>
+            </FormContainer>
+        </LoginContainer>
+    );
+}
 
-        <Input
-          type="text"
-          placeholder="Usuário"
-          value={nome}
-          onChange={(e) => {
-            setNome(e.target.value);
-            setError("");
-          }}
-          icon={FiUser}
-        />
-
-        <Input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => {
-            setSenha(e.target.value);
-            setError("");
-          }}
-          icon={FiLock}
-          onKeyDown={handleKeyPress}
-        />
-
-        <C.labelError>{error}</C.labelError>
-
-        <Button Text="ENTRAR" onClick={handleLogin} />
-      </C.Content>
-    </C.Container>
-  );
-};
-
-export default Login;
+export default LoginPage;

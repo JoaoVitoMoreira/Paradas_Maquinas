@@ -1,15 +1,13 @@
 import { useAuth } from "../contexts/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom"; 
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = () => {
   const { signed, loading } = useAuth();
 
   if (loading) {
-    return null; // ou algum <LoadingSpinner />
+    return <div>Carregando...</div>;
   }
-
-  return signed ? children : <Navigate to="/" />;
+  return signed ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default PrivateRoute;
-

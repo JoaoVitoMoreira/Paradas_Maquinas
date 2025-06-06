@@ -1,33 +1,30 @@
+// Arquivo: routes/routes.js
 const express = require('express');
-const path = require('path');
-const  authMiddleware  = require('../middleware/auth.js')
-const {getUsuarios, addUsuarios,updateUsuario,deleteUsuario,loginUsuario,getUsuarioAutenticado} = require('../controllers/users-sequelize.js');
-const { get } = require('https');
-const { refreshUsuario, logoutUsuario } = require('../controllers/user.js');
+const authMiddleware = require('../middleware/auth.js');
+
+const {
+    getUsuarios,
+    addUsuarios,
+    updateUsuario,
+    deleteUsuario,
+    loginUsuario,
+    logoutUsuario,
+    refreshUsuario, 
+    getUsuarioAutenticado
+} = require('../controllers/usuarioController.js'); 
 
 const router = express.Router();
 
-// Rota de login
-
-router.post('/login',loginUsuario);
-
-router.post('/refresh', refreshUsuario);
-
+// --- Rotas de Autenticação ---
+router.post('/login', loginUsuario);
 router.post('/logout', logoutUsuario);
+router.post('/refresh', refreshUsuario); 
 
-router.get("/usuarios",authMiddleware,getUsuarios);
-
-// Rota protegida
-//router.get('/usuarios', auth, autorizar('admin'), getUsuarios);
-//router.get('/sessoes', auth, listarSessoesUsuario);
-//router.delete('/sessoes/:id', auth, revogarSessaoUsuario);
-
+// --- Rotas de Usuário (Protegidas) ---
+router.get("/usuarios", authMiddleware, getUsuarios);
+router.post("/usuarios",authMiddleware, addUsuarios);
+router.put("/usuarios/:id", authMiddleware, updateUsuario);
+router.delete("/usuarios/:id", authMiddleware, deleteUsuario);
 router.get("/usuario-autenticado", authMiddleware, getUsuarioAutenticado);
 
-router.post("/usuarios", addUsuarios);
-
-router.put("/usuarios/:id", updateUsuario);
- 
-router.delete("/usuarios/:id", deleteUsuario);
-
-module.exports = router;    
+module.exports = router;

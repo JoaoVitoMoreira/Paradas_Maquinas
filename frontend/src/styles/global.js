@@ -1,19 +1,24 @@
-import {createGlobalStyle} from "styled-components";
+// Arquivo: src/styles/global.js
+
+import { createGlobalStyle } from "styled-components";
 
 const Global = createGlobalStyle`
-
     * {
         margin: 0;
         padding: 0;
-        font-family: poppins,sans-serif;
+        box-sizing: border-box;
     }
 
     body {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        background-color: #F2F2F2;
+        /* APLICA A FONTE A TODA A APLICAÇÃO */
+        font-family: 'Poppins', sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    html, body, #root {
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden;
     }
 `;
 

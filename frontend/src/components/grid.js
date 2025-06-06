@@ -1,99 +1,84 @@
+// src/components/grid.js
 import React from "react";
-import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit} from "react-icons/fa"
-import { toast } from "react-toastify";
+
+const GridContainer = styled.div`
+  width: 100%;
+  background-color: ${(props) => props.theme.colors.cardBackground}; // <-- Usando a cor do tema
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  box-shadow: ${(props) => props.theme.shadows.purple};
+`;
 
 const Table = styled.table`
-    width: 100%;
-    background-color: #FFF;
-    padding: 20px;
-    box-shadow: 0px 0px 5px #CCC;
-    border-radius: 5px;
-    max-width: 800px;
-    margin: 20px auto;
-    word-break: break-all;
+  width: 100%;
+  border-collapse: collapse; // Tira o espaçamento duplo das bordas
 `;
 
-export const Thead = styled.thead``;
+const Thead = styled.thead``;
 
-export const Tbody = styled.tbody``;
+const Tbody = styled.tbody``;
 
-export const Tr = styled.tr``;
+const Tr = styled.tr`
+  // Adiciona o efeito de 'hover' e de 'selecionado'
+  cursor: pointer;
+  background-color: ${(props) => (props.isSelected ? "#eef2ff" : "transparent")};
 
-export const Th = styled.th`
-    text-align: start;
-    border-bottom: inset;
-    padding-bottom: 5px;
-
-    @media(max-width: 500px) {
-        ${(props) => props.onlyWeb && "display: none"}
-    }
+  &:hover {
+    background-color: #f7f7f7;
+  }
 `;
 
-export const Td = styled.td`
-    padding-top: 15px;
-    text-align: ${(props) => (props.alignCenter ? "center" : "start")};
-    width: ${(props) => (props.width ? props.width : "auto")};
-
-    @media(max-width: 500px) {
-        ${(props) => props.onlyWeb && "display: none"}
-    }
+const Th = styled.th`
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  padding: 1rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
 `;
 
-const Grid = ({ users, getUsers, setOnEdit }) => {
+const Td = styled.td`
+  padding: 1rem;
+  color: #374151;
+`;
 
-    const handleDelete = async (id) => {
-        try {
-            const { data } = await axios.delete(`http://localhost:4000/usuarios/${id}`);
-            toast.success(data.message); // Supondo que o backend retorna uma mensagem
 
-            await getUsers(); // Chama getUsers para atualizar a lista de usuários
-        } catch (err) {
-            toast.error(err.response ? err.response.data : "Erro ao deletar usuário");
-        } finally {
-            setOnEdit(null); // Limpa a edição
-        }
-    };
-    
-    const handleEdit = (item) => {
-        setOnEdit(item);
-    };
-    
-    return (
-        <Table>
-            <Thead>
-                <Tr>
-                    <Th>Nome</Th>
-                    <Th>Senha</Th>
-                    <Th>Cargo</Th>
-                    <Th></Th>
-                    <Th></Th>
-                </Tr>
-            </Thead>
-            <Tbody>
-                {Array.isArray(users) && users.length > 0 ? (
-                users.map((item, i) => (
-                <Tr key={i}>
-                    <Td width="30%">{item.nome_usua}</Td>
-                    <Td width="30%">{item.senha_usua}</Td>
-                    <Td width="20%">{item.func_usua}</Td>
-                    <Td className="text-align:center" width="5%">
-                        <FaEdit onClick={() => handleEdit(item)}/>
-                    </Td>
-                    <Td className="text-align:center" width="5%">
-                        <FaTrash onClick={() => handleDelete(item.id_usua)}/>
-                    </Td>
-                </Tr>
-        ))
-    ) : (
-        <Tr>
-            <Td colSpan="5">Nenhum usuário encontrado</Td>
-        </Tr>
-    )}
-            </Tbody>
-        </Table>
-    );
+const Grid = ({ users, selectedUser, setSelectedUser }) => {
+  return (
+    <GridContainer>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Código</Th>
+            <Th>Nome</Th>
+            <Th>Cargo</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {Array.isArray(users) && users.length > 0 ? (
+            users.map((item) => (
+              <Tr 
+                key={item.id} 
+                onClick={() => setSelectedUser(item)}
+                isSelected={selectedUser && selectedUser.id === item.id}
+              >
+                <Td>{item.id}</Td>
+                <Td>{item.nome_usua}</Td>
+                <Td>{item.func_usua}</Td>
+              </Tr>
+            ))
+          ) : (
+            <Tr>
+              <Td colSpan="3">Nenhum usuário encontrado</Td>
+            </Tr>
+          )}
+        </Tbody>
+      </Table>
+    </GridContainer>
+  );
 };
 
 export default Grid;

@@ -1,1 +1,0 @@
-const soma = require("./soma");
