@@ -1,11 +1,7 @@
-// Arquivo: src/pages/Login/index.js
-
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/useAuth';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
-// --- Componentes de Estilo (SUA ESTILIZAÇÃO ORIGINAL PRESERVADA) ---
 
 const LoginContainer = styled.div`
   display: flex;
@@ -42,13 +38,11 @@ const Subtitle = styled.p`
   margin-bottom: 2rem;
 `;
 
-// MUDANÇA 1: InputArea se torna a referência de posição para o label
 const InputArea = styled.div`
   position: relative;
   margin-bottom: 2.5rem;
 `;
 
-// MUDANÇA 2: Label é posicionado de forma absoluta para o efeito "flutuante"
 const Label = styled.label`
   position: absolute;
   top: 13px;
@@ -60,7 +54,6 @@ const Label = styled.label`
   padding: 0 5px; // Espaçamento para não encostar na linha
 `;
 
-// MUDANÇA 3: Input tem apenas a borda de baixo e controla o Label
 const Input = styled.input`
   width: 100%;
   padding: 12px 10px;
@@ -85,7 +78,6 @@ const Input = styled.input`
   }
 `;
 
-// Estilo original do botão preservado
 const Button = styled.button`
   position: relative;
   overflow: hidden;
@@ -129,11 +121,7 @@ const ButtonText = styled.span`
   z-index: 2;
 `;
 
-
-// --- Componente Principal da Página ---
-
 function LoginPage() {
-    // ... A lógica do seu componente (useState, handleLogin) permanece a mesma ...
     const [nome, setNome] = useState('');
     const [senha, setSenha] = useState('');
     const [error, setError] = useState('');
@@ -141,30 +129,34 @@ function LoginPage() {
     const { signin } = useAuth();
     const navigate = useNavigate();
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setError('');
-        setIsSubmitting(true);
-        try {
-            const result = await signin(nome, senha);
-            if (result) {
-                setError(result);
-                setIsSubmitting(false);
-            } else {
-                setTimeout(() => navigate('/home'), 1500);
-            }
-        } catch (err) {
-            setError("Ocorreu um erro inesperado.");
-            setIsSubmitting(false);
-        }
-    };
+    e.preventDefault();
+    setError('');
+    setIsSubmitting(true);
 
+    try {
+        const result = await signin(nome, senha);
+
+        if (result.error) {
+            setError(result.error);
+            setIsSubmitting(false);
+        } else if (result.usuario) {
+            if (result.usuario.func_usua === 'operador de máquina') {
+                navigate('/operador');
+            } else {
+                navigate('/home');
+            }
+        }
+    } catch (err) {
+        setError("Ocorreu um erro inesperado.");
+        setIsSubmitting(false);
+    }
+};
     return (
         <LoginContainer>
             <FormContainer onSubmit={handleLogin}>
                 <Title>Bem vindo ao <span>LOGIN</span></Title>
                 <Subtitle>Preencha os dados de login para acessar</Subtitle>
                 
-                {/* MUDANÇA 4: A estrutura no JSX é alterada (Input antes de Label) */}
                 <InputArea>
                     <Input id="nome" type="text" value={nome} onChange={(e) => setNome(e.target.value)} required placeholder=" "/>
                     <Label htmlFor="nome">Usuário</Label>

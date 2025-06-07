@@ -1,10 +1,10 @@
-// Arquivo: src/pages/Home.js (VERSÃO FINAL COMPLETA)
+// Arquivo: src/pages/Home.js (VERSÃO COMPLETA E CORRIGIDA)
 
 import React from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/useAuth';
 
-// --- DEFINIÇÃO DOS COMPONENTES DE ESTILO ---
+// --- DEFINIÇÃO DE TODOS OS COMPONENTES DE ESTILO ---
 
 const HomePageContainer = styled.div`
   width: 100%;
@@ -24,6 +24,10 @@ const WelcomeTitle = styled.h2`
   font-size: 1.8rem;
   color: #111827;
   font-weight: bold;
+
+  & > strong {
+    color: #8b5cf6;
+  }
 `;
 
 const DateDisplay = styled.p`
@@ -38,6 +42,13 @@ const UserProfile = styled.div`
   gap: 1rem;
   font-size: 1rem;
   color: #374151;
+
+  & > span {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+  }
 `;
 
 const UserAvatar = styled.div`
@@ -77,17 +88,17 @@ const GridContainer = styled.div`
 `;
 
 
-// --- COMPONENTES FUNCIONAIS QUE USAM OS ESTILOS ---
+// --- COMPONENTES FUNCIONAIS ---
 
 const Header = () => {
   const { user } = useAuth();
   const today = new Date();
-  const dateString = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear().toString().slice(-2)}`;
+  const dateString = today.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
 
   return (
     <HeaderContainer>
       <WelcomeContainer>
-        <WelcomeTitle>Bem Vindo, {user?.nome_usua}!</WelcomeTitle>
+        <WelcomeTitle>Bem Vindo, <strong>{user?.nome_usua}!</strong></WelcomeTitle>
         <DateDisplay>{dateString}</DateDisplay>
       </WelcomeContainer>
       <UserProfile>
@@ -98,16 +109,18 @@ const Header = () => {
   );
 };
 
+// Este componente precisa estar aqui para ser usado
 const DashboardCard = ({ title }) => {
   return <Card>{title}</Card>;
 };
 
 
-// --- O COMPONENTE PRINCIPAL DA PÁGINA QUE RENDERIZA TUDO ---
+// --- COMPONENTE PRINCIPAL DA PÁGINA HOME ---
 
 function Home() {
   return (
     <HomePageContainer>
+      {/* O return precisa renderizar o Header E a GridContainer */}
       <Header />
       <GridContainer>
         <DashboardCard title="Qualidade" />

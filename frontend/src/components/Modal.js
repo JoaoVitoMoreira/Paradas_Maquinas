@@ -1,5 +1,3 @@
-// Arquivo: src/components/Modal.js (VERSÃO COM BOTÃO DE FECHAR)
-
 import React from 'react';
 import styled from 'styled-components';
 
@@ -22,14 +20,13 @@ const ModalContainer = styled.div`
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   min-width: 400px;
-  position: relative; // <-- MUDANÇA 1: Adicionado para ser a referência de posição do botão
+  position: relative; 
 `;
 
-// --- NOVO --- Estilo para o botão de fechar
 const CloseButton = styled.button`
-  position: absolute; // <-- Permite posicionar livremente dentro do container
-  top: 15px;          // 15px do topo
-  right: 15px;         // 15px da direita
+  position: absolute; 
+  top: 15px;          
+  right: 15px;         
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -50,7 +47,6 @@ const Modal = ({ isOpen, onClose, children }) => {
   return (
     <ModalBackdrop onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
-        {/* --- NOVO --- Adiciona o botão de fechar aqui dentro */}
         <CloseButton onClick={onClose}>&times;</CloseButton>
         
         {children}

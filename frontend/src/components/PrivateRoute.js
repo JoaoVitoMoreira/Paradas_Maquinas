@@ -1,13 +1,18 @@
 import { useAuth } from "../contexts/useAuth";
-import { Navigate, Outlet } from "react-router-dom"; 
+import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoute = () => {
-  const { signed, loading } = useAuth();
+const PrivateRoute = ({ allowedRoles }) => {
+  const { signed, loading, user } = useAuth();
 
   if (loading) {
     return <div>Carregando...</div>;
   }
-  return signed ? <Outlet /> : <Navigate to="/" />;
+
+  const userRole = user?.func_usua?.toLowerCase() || '';
+
+  const isAuthorized = signed && allowedRoles.includes(userRole);
+
+  return isAuthorized ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default PrivateRoute;

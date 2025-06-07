@@ -17,7 +17,7 @@ const ContentContainer = styled.main`
 `;
 
 
-const DashboardLayout = () => { // Não precisa mais de 'children' como prop
+const DashboardLayout = () => { 
   return (
     <LayoutContainer>
       <Sidebar />

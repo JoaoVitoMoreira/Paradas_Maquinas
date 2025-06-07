@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 
-// Seus styled-components (não precisam de alteração)
 const FormContainer = styled.form`
     display: flex;
     align-items: flex-end;
@@ -40,8 +39,6 @@ const Button = styled.button`
     height: 42px;
 `;
 
-// --- COMPONENTE DO FORMULÁRIO COM A LÓGICA CORRIGIDA ---
-
 const Form = ({ getUsers, onEdit, setOnEdit }) => {
     const [nome, setNome] = useState("");
     const [senha, setSenha] = useState("");
@@ -49,11 +46,8 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
 
     useEffect(() => {
         if (onEdit) {
-            // Preenche os campos quando um usuário está sendo editado
             setNome(onEdit.nome_usua || "");
             setCargo(onEdit.func_usua || "");
-            // O campo de senha inicia vazio na edição para que o usuário
-            // só digite algo se quiser, de fato, ALTERAR a senha.
             setSenha("");
         }
     }, [onEdit]);
@@ -61,7 +55,6 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // VALIDAÇÃO CORRIGIDA: Na criação, a senha é obrigatória. Na edição, não.
         if (!nome || (!onEdit && !senha) || !cargo) {
             return toast.warn("Preencha todos os campos obrigatórios!");
         }
@@ -70,23 +63,20 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
 
         try {
             if (onEdit) {
-                // --- LÓGICA DE ATUALIZAÇÃO CORRIGIDA ---
                 const dadosParaAtualizar = {
                     nome_usua: nome,
                     func_usua: cargo,
                 };
                 
-                // Só adiciona a propriedade 'senha_usua' ao objeto se o campo 'senha' foi preenchido.
                 if (senha) {
                     dadosParaAtualizar.senha_usua = senha;
                 }
 
-                // CORREÇÃO: Usando onEdit.id para montar a URL corretamente.
                 await axios.put(`http://localhost:4000/usuarios/${onEdit.id}`, dadosParaAtualizar, config);
                 toast.success("Usuário atualizado com sucesso!");
 
             } else {
-                // --- LÓGICA DE CRIAÇÃO (já estava correta, apenas adicionamos a config) ---
+
                 await axios.post("http://localhost:4000/usuarios", {
                     nome,
                     senha,
@@ -94,8 +84,7 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
                 }, config);
                 toast.success("Usuário criado com sucesso!");
             }
-            
-            // Limpa o formulário e recarrega a lista de usuários na tela
+           
             setNome("");
             setSenha("");
             setCargo("");

@@ -1,14 +1,22 @@
+// Arquivo: src/pages/users.js (VERSÃO LIMPA E FINAL)
+
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify"; // Não precisa mais do ToastContainer aqui
 import styled from "styled-components";
 import Grid from "../components/grid";
 import Form from "../components/form";
 import Modal from "../components/Modal";
+import ConfirmationModal from "../components/ConfirmationModal";
 import { FaUserPlus, FaEdit, FaTrash } from 'react-icons/fa';
+
+// --- Seus componentes de Estilo aqui (PageContainer, Header, etc.) ---
+// ... (vou omitir por brevidade, eles estão corretos)
 
 const PageContainer = styled.div`
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -56,7 +64,9 @@ function UserPage() {
   const [users, setUsers] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  // O estado de isLoading foi removido
 
   const getUsers = async () => {
     try {
@@ -74,33 +84,36 @@ function UserPage() {
 
   const handleAdd = () => {
     setOnEdit(null);
-    setIsModalOpen(true);
+    setIsFormModalOpen(true);
   };
 
   const handleEdit = () => {
     if (selectedUser) {
       setOnEdit(selectedUser);
-      setIsModalOpen(true);
+      setIsFormModalOpen(true);
     } else {
       toast.warn("Por favor, selecione um usuário para alterar.");
     }
   };
   
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (selectedUser) {
-        if (window.confirm("Tem certeza que deseja excluir o usuário?")) {
-            try {
-                await axios.delete(`http://localhost:4000/usuarios/${selectedUser.id}`, { withCredentials: true });
-                toast.success("Usuário deletado com sucesso!");
-                setSelectedUser(null);
-                getUsers(); 
-            } catch (err) {
-                toast.error("Erro ao deletar usuário.");
-                console.error(err);
-            }
-        }
+      setIsConfirmModalOpen(true);
     } else {
-        toast.warn("Por favor, selecione um usuário para excluir.");
+      toast.warn("Por favor, selecione um usuário para excluir.");
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:4000/usuarios/${selectedUser.id}`, { withCredentials: true });
+      toast.success("Usuário deletado com sucesso!");
+      setSelectedUser(null);
+      getUsers();
+    } catch (err) {
+      toast.error("Erro ao deletar usuário.");
+    } finally {
+      setIsConfirmModalOpen(false);
     }
   };
 
@@ -110,30 +123,34 @@ function UserPage() {
         <Header>
           <Title>Usuários</Title>
         </Header>
+
+        {/* O Grid com a correção para estado vazio que fizemos antes continua sendo uma boa prática */}
         <Grid users={users} selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+
         <ActionBar>
-          <ActionButton onClick={handleAdd}>
-            <FaUserPlus /> Adicionar
-          </ActionButton>
-          <ActionButton onClick={handleEdit}>
-            <FaEdit /> Alterar
-          </ActionButton>
-          <ActionButton onClick={handleDelete}>
-            <FaTrash /> Excluir
-          </ActionButton>
+          <ActionButton onClick={handleAdd}><FaUserPlus /> Adicionar</ActionButton>
+          <ActionButton onClick={handleEdit}><FaEdit /> Alterar</ActionButton>
+          <ActionButton onClick={handleDelete}><FaTrash /> Excluir</ActionButton>
         </ActionBar>
       </PageContainer>
       
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isFormModalOpen} onClose={() => setIsFormModalOpen(false)}>
         <Form 
           onEdit={onEdit} 
           setOnEdit={setOnEdit} 
           getUsers={getUsers} 
-          closeModal={() => setIsModalOpen(false)} 
+          closeModal={() => setIsFormModalOpen(false)} 
         />
       </Modal>
 
-      <ToastContainer autoClose={3000} position="bottom-right" />
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmDelete}
+        message={`Tem certeza que deseja excluir o usuário "${selectedUser?.nome_usua}"?`}
+      />
+
+      {/* Não precisa mais do ToastContainer aqui, ele deve ficar no App.js */}
     </>
   );
 }

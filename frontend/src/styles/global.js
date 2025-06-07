@@ -1,6 +1,5 @@
-// Arquivo: src/styles/global.js
-
 import { createGlobalStyle } from "styled-components";
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const Global = createGlobalStyle`
     * {
@@ -10,7 +9,6 @@ const Global = createGlobalStyle`
     }
 
     body {
-        /* APLICA A FONTE A TODA A APLICAÇÃO */
         font-family: 'Poppins', sans-serif;
         background-color: #f2f2f2;
     }
@@ -19,6 +17,18 @@ const Global = createGlobalStyle`
         height: 100%;
         width: 100%;
         overflow-x: hidden;
+    }
+
+    .Toastify__toast-body {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .Toastify__toast-body > svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
 `;
 
