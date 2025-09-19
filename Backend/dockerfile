@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN chmod +x /app/node_modules/.bin/nodemon
+
 COPY . .
 
 EXPOSE 4000
