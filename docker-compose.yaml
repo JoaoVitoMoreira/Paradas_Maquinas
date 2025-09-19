@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: teste
+      POSTGRES_DB: BancoAula
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: adalbertooo/backend:1.1
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/Teste
+    depends_on:
+      - db
+    ports:
+      - "4000:4000"
+
+  frontend:	
+    image: adalbertooo/frontend:1.1
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
