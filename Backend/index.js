@@ -8,7 +8,10 @@ const router = require('./routes/routes.js');
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+   origin: [
+    'http://localhost:3000',     
+    'http://135.224.15.6:3000'   
+  ],
   credentials: true
 }));
 
@@ -17,6 +20,6 @@ app.use(cookieParser());
 
 app.use('/', router);
 
-app.listen(4000, () => {
+app.listen(4000, '0.0.0.0', () => {
   console.log('Servidor Ligado na porta 4000');
 });
