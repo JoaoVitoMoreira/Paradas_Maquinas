@@ -17,7 +17,6 @@ services:
     build: ./backend
     container_name: paradas_maquinas_backend
     environment:
-      # URL deve ser igual aos dados do serviço 'db'
       DATABASE_URL: postgresql://postgres:5DY5Nweb9@db:5432/teste
       JWT_SECRET: "ld190sd8auyghgrd723hd8xchv8eh1239129"
       REFRESH_TOKEN_EXPIRES_DAYS: 7
@@ -34,3 +33,5 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+volumes:
+  pgdata:
