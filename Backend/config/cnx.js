@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('maquinas-apontamento', 'postgres', 'G6xty:b;V;t(*sVp', {
-    host: '34.72.222.186',
+const sequelize = new Sequelize('teste', 'postgres', '5DY5Nweb9', {
+    host: '135.224.15.6',
     dialect: 'postgres',
 });
 

@@ -22,7 +22,7 @@ function App() {
 
           <Route 
             element={
-              <PrivateRoute allowedRoles={['administrador', 'analista de pcp', 'operador de máquina']} />
+              <PrivateRoute allowedRoles={['administrador', 'analista de pcp', 'operador de máquina','admin']} />
             }
           >
             <Route element={<DashboardLayout />}>
